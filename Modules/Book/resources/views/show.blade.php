@@ -1,1 +1,1 @@
-<?php
+{{$book->name}}

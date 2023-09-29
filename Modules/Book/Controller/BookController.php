@@ -22,7 +22,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        return view('book::create');
     }
 
     /**
@@ -30,15 +30,23 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required',
+            'isbn' => 'required',
+            'price' => 'required',
+        ]);
+        Book::query()->create($validated);
+        return redirect()->route('books.index')->with('success', 'Book Created');
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $book = Book::query()->find($id);
+        return view('book::show', compact('book'));
     }
 
     /**
@@ -46,7 +54,8 @@ class BookController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $book = Book::query()->find($id);
+        return view('book::edit', compact('book'));
     }
 
     /**
@@ -54,7 +63,13 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
+        $data['name'] = $request->get('name');
+        $data['price'] = $request->get('price');
+        $data['isbn'] = $request->get('isbn');
+
+        Book::query()->where('id', $id)->update($data);
+
     }
 
     /**
@@ -62,6 +77,20 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Book::query()->where('id', $id)->delete();
+    }
+
+    public function delete()
+    {
+
+        $books = Book::onlyTrashed()->get();
+        return view('book::delete', compact('books'));
+    }
+
+    public function deleteForce($id)
+    {
+
+        $book = Book::onlyTrashed()->find($id);
+        $book->forceDelete();
     }
 }

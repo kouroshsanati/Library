@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name')->unique();
             $table->string('isbn');
             $table->string('price');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
